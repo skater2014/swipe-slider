@@ -1,0 +1,59 @@
+<?php //Gallary Page Only show Slider?>
+<?php if ( is_page('gallary') ) : ?>
+
+  
+    <div class="swiper">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+        <!-- Slides -->
+          
+          <?php
+          global $slider_posts;
+          $slider_posts = array();
+          $slider = array(
+            'post_type' => 'post',
+            'meta_key' => 'show_in_slider',
+            'meta_value' => 'yes',
+            'posts_per_page' => 6
+            );
+          $the_query = new WP_Query( $slider );
+          if ( $the_query->have_posts() ) :   
+            while ( $the_query->have_posts() ) : $the_query->the_post(); 
+            $img_url = get_the_post_thumbnail_url(get_the_ID(), 'full'); //元のサイズ（full）のサムネイルの URL を取得してリンクの href 属性に esc_url() でエスケープ処理して出力
+          ?>
+
+          <div class="swiper-slide" style="background-image: url('<?php echo $img_url; ?>');">
+            <div class="slider_overlay"></div>
+              <div class="swiper_slide_text">
+                  <h3><?php the_title(); ?></h3>
+                  <p><?php echo dess_get_excerpt(120); ?></p>
+                  <p class="slide_read_more"><a href="<?php the_permalink(); ?>">READ MORE</a></p>
+              </div>
+          </div>
+
+              <?php
+                array_push($slider_posts, get_the_ID());
+                endwhile;
+              endif;
+              wp_reset_postdata();
+              wp_reset_query();
+              ?>
+
+  </div>
+     <!--end swiper-->
+
+      <!-- 必要に応じてページネーション -->
+      <div class="swiper-pagination"></div>
+      <!-- 必要に応じてナビボタン -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+
+      <!-- If we need scrollbar -->
+      <div class="swiper-scrollbar"></div>
+
+
+
+  </div>
+  <!--end swiper-->
+
+<?php endif; ?>
